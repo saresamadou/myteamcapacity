@@ -12,6 +12,7 @@ public class DevSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 
 
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth)
             throws Exception {
@@ -28,6 +29,14 @@ public class DevSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests().anyRequest().authenticated().and().httpBasic();
+        http.authorizeRequests()
+                    .antMatchers("/admin/**").hasRole("ADMIN")
+                    .antMatchers("/","/login/**", "/css/**", "/h2-console/*").permitAll()
+                    .anyRequest().authenticated().and()
+                .csrf()
+                .ignoringAntMatchers("/h2-console/*")
+                    .and()
+                .httpBasic();
+        http.headers().frameOptions().disable();
     }
 }

@@ -2,15 +2,19 @@ package fr.aboudou.myteamcapacity.model;
 
 import fr.aboudou.myteamcapacity.enums.EnumRole;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 public class TeamMember {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column
     private String name;
 
+    @Column
     private EnumRole role;
 
     public TeamMember() {
@@ -35,5 +39,9 @@ public class TeamMember {
 
     public void setRole(EnumRole role) {
         this.role = role;
+    }
+
+    public Long getId() {
+        return id;
     }
 }

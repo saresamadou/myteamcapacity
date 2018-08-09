@@ -1,6 +1,7 @@
 package fr.aboudou.myteamcapacity;
 
 import fr.aboudou.myteamcapacity.controllers.TeamMemberController;
+import fr.aboudou.myteamcapacity.controllers.TeamMemberNotFound;
 import fr.aboudou.myteamcapacity.enums.EnumRole;
 import fr.aboudou.myteamcapacity.model.TeamMember;
 import fr.aboudou.myteamcapacity.services.TeamMemberService;
@@ -10,6 +11,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -20,6 +22,8 @@ import org.springframework.util.Base64Utils;
 
 
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -51,5 +55,13 @@ public class TeamMenberControllerTest {
                 .andExpect(jsonPath("$.name", is(member.getName())))
                 .andExpect(content().json("{\"name\":\"SARE Aboudou Samadou\",\"role\":\"DEVELOPER\"}"));
 
+    }
+
+
+    @Test
+    public void getTeamMember_notFound() throws Exception {
+        when(service.findTeamMemberByName(anyString())).thenThrow(new TeamMemberNotFound());
+        this.mockMvc.perform(get("/tm/sare").header(HttpHeaders.AUTHORIZATION,
+                "Basic " + Base64Utils.encodeToString("user:password".getBytes()))).andExpect(status().isNotFound());
     }
 }
